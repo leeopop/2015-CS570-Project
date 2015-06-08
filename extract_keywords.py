@@ -11,21 +11,26 @@ def split_line(single_string):
 	single_string = single_string.lower()
 	words = splitter.split(single_string)
 	words = [x.strip() for x in words]
-	return words
+	ret = []
+	for x in words:
+		if len(x.strip()) == 0:
+			continue
+		ret.append(x)
+	return ret
 
-def create_keyword_table(paper_data, word_limit=30):
+def create_keyword_table(paper_data, word_limit=30, skip_words = None):
 	word_count = defaultdict(int)
 	for (id,field) in paper_data.items():
 		title = field['title']
-		title_words = split_line(title)
+		words = split_line(title)
 
 		keyword_list = field['keyword']
-		key_words = split_line(keyword_list)
+		words += split_line(keyword_list)
 
-		for word in title_words:
-			word_count[word] += 1
-
-		for word in key_words:
+		for word in words:
+			if skip_words is not None:
+				if word in skip_words:
+					continue
 			word_count[word] += 1
 
 	keyword_table = dict()
