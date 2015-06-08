@@ -72,7 +72,7 @@ def read_index(filename):
 					author = int(x)
 				elif i == paper_id:
 					paper = int(x)
-			mapping.append(tuple(author,paper))
+			mapping.append((author,paper))
 	return mapping
 
 def submit(input_file, output_file, score_dict):
