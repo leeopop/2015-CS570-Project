@@ -16,9 +16,10 @@ def read_data(filename, classification=True, limit_index=None):
 
 		target_id = -1
 		is_class = []
+		available = set()
 		for i in range(len(column)):
 			if limit_index is not None:
-				if column[i].lower() is not limit_index:
+				if not column[i].lower() in limit_index:
 					continue
 			if column[i].lower() == "target":
 				target_id = i
@@ -27,6 +28,7 @@ def read_data(filename, classification=True, limit_index=None):
 				is_class.append(True)
 			else:
 				is_class.append(False)
+			available.add(i)
 		#is_class.append(result_type)
 
 		for line in reader:
@@ -35,6 +37,8 @@ def read_data(filename, classification=True, limit_index=None):
 			sample_line = []
 			response_line = []
 			for (x,i) in zip(line, range(len(line))):
+				if i not in available:
+					continue
 				if i == target_id:
 					if x.isdigit():
 						response_line.append(int(x))
@@ -97,14 +101,14 @@ def submit(input_file, output_file, score_dict):
 
 
 def main():
-	limit_index=['target','topic_dot']
-	#limit_index=None
-	(samples,responses,is_class) = read_data("train_data.csv", limit_index=limit_index)
+	#limit_index=['target','topic_dot']
+	limit_index=None
+	(samples,responses,is_class) = read_data("train_data_dot.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
 	#This parameter works for development environment
 	classifier = sklearn.ensemble.RandomForestClassifier(
-		n_estimators = 750,
+		n_estimators = 1500,
 		criterion = 'entropy',
 		max_features = None,
 		class_weight='auto',
@@ -115,7 +119,7 @@ def main():
 	ret = classifier.score(samples, responses)
 	print("Train score: {}".format(ret))
 
-	(tests,responses,is_class) = read_data("test_data.csv", limit_index=limit_index)
+	(tests,responses,is_class) = read_data("test_data_dot.csv", limit_index=limit_index)
 	predict_result = classifier.predict_proba(tests)
 	label = read_index("test_index.csv")
 	print("result_len: {}, label_len: {}".format(len(predict_result), len(label)))
@@ -147,6 +151,6 @@ def add_column(orig,orig_index,new,new_file, new_column):
 	pass
 
 if __name__ == '__main__':
-	main()
-	#add_column('test_data.csv','test_index.csv','paper_author_topic_dot.csv','test_data_dot.csv',['topic_dot'])
-	#add_column('train_data.csv','train_index.csv','paper_author_topic_dot.csv','train_data_dot.csv',['topic_dot'])
+	#main()
+	add_column('test_data.csv','test_index.csv','paper_author_topic_dot.csv','test_data_dot.csv',['topic_dot'])
+	add_column('train_data.csv','train_index.csv','paper_author_topic_dot.csv','train_data_dot.csv',['topic_dot'])

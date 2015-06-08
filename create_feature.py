@@ -46,18 +46,27 @@ def paper_author_topic_sum(total_data, num_topics=150):
 		if (paper_id in paper.keys()) and (author_id in author.keys()):
 			paper_topic = paper[paper_id]['topic_sum']
 			author_topic = author[author_id]['topic_sum']
-			paper_author[(paper_id, author_id)]['topic_dot'] = numpy.dot(paper_topic, author_topic)
+			norm = numpy.linalg.norm(paper_topic)
+			if norm > 0.5:
+				paper_author[(paper_id, author_id)]['topic_dot'] = numpy.dot(paper_topic, author_topic)
+				paper_author[(paper_id, author_id)]['has_topic_dot'] = int(1)
+			else:
+				paper_author[(paper_id, author_id)]['topic_dot'] = float(0)
+				paper_author[(paper_id, author_id)]['has_topic_dot'] = int(0)
 		else:
 			paper_author[(paper_id, author_id)]['topic_dot'] = float(0)
+			paper_author[(paper_id, author_id)]['has_topic_dot'] = int(0)
 
 def save_topic_sum(total_data):
 	assert('PaperAuthor' in total_data.keys())
 	paper_author = total_data['PaperAuthor']
 	with open('paper_author_topic_dot.csv','w',encoding='utf-8') as write_file:
 		writer = csv.writer(write_file)
-		writer.writerow(['paperid','authorid','topic_dot'])
+		writer.writerow(['paperid','authorid','topic_dot','has_topic_dot'])
 		for (paper_id,author_id) in paper_author.keys():
-			writer.writerow([paper_id, author_id,paper_author[(paper_id,author_id)]['topic_dot']])
+			writer.writerow([paper_id, author_id,
+			                 paper_author[(paper_id,author_id)]['topic_dot'],
+			                 paper_author[(paper_id,author_id)]['has_topic_dot']])
 
 
 ##from here, leeopop does
@@ -98,6 +107,9 @@ def paper_topic(total_data):
 				word_id = int(title_keyword[word]['unique'])
 				word_vector = title_keyword_topic[word_id]
 				topic_vector += word_vector
+		norm = numpy.linalg.norm(topic_vector)
+		if norm > 0.5:
+			topic_vector /= norm
 		paper[item]['topic_sum'] = topic_vector
 	#hint: use split_line in extract_keyword.py
 	#hint: merge 'title' and 'keyword' of paper data
