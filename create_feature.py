@@ -26,7 +26,7 @@ def author_topic(total_data, num_topics=150):
         else:
             author_sum[author_id] = author_sum[author_id] + sum_vector
 
-    for (author_id, author_field) in author:
+    for (author_id, author_field) in author.items():
         if author_id in author_sum.keys():
             author_field['topic_sum'] = author_sum[author_id]
         else:
