@@ -24,10 +24,19 @@ def merge_authors(total_data):
 	total_data['old_to_new'] = old_to_new
 	total_data['new_to_old'] = new_to_old
 
+def convert_title(total_data):
+	assert('title_keyword' in total_data.keys())
+	assert('title_keyword_topic' in total_data.keys())
 
+	# key: word, value: unique id
+	# e.g. title_keyword['apple']['unique'] returns unique identifier
+	title_keyword = total_data['title_keyword']
 
+	# key: word id (unique identifier), value: numpy vector
+	title_keyword_topic = total_data['title_keyword_topic']
 
-
+	#hint: use split_line in extract_keyword.py
+	#hint: merge 'title' and 'keyword' of paper data
 
 
 ##end
