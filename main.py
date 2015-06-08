@@ -95,11 +95,13 @@ def submit(input_file, output_file, score_dict):
 def main():
 	(samples,responses,is_class) = read_data("train_data.csv")
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
+
+	#This parameter works for development environment
 	classifier = sklearn.ensemble.RandomForestClassifier(
-		n_estimators = 1500,
-		#criterion = 'entropy',
-		max_features = 'auto',
-		max_depth = 5,
+		n_estimators = 750,
+		criterion = 'entropy',
+		max_features = None,
+		class_weight='auto',
 		n_jobs = multiprocessing.cpu_count(),
 		verbose = 1
 	)
@@ -112,11 +114,9 @@ def main():
 	label = read_index("test_index.csv")
 	print("result_len: {}, label_len: {}".format(len(predict_result), len(label)))
 
-	print(predict_result)
 	score_dict = dict()
 	for (prob, key) in zip(predict_result, label):
 		score_dict[key] = prob
-	print(score_dict)
 
 	submit("Test.csv", "submit.csv", score_dict)
 
