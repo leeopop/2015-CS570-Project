@@ -37,7 +37,7 @@ def load_single_file(input_file):
 def load_all(directory = '.', file_list = None):
 	return_data = dict()
 	if file_list == None:
-		file_list = ['Author', 'Conference', 'Journal', 'PaperAuthor', 'Test', 'Train', 'Valid', 'ValidSolution']
+		file_list = ['Author', 'Conference', 'Journal', 'Paper', 'PaperAuthor', 'Test', 'Train', 'Valid', 'ValidSolution']
 	for name in file_list:
 		file_name = os.path.join(directory, '{}.csv'.format(name))
 		return_data[name] = load_single_file(file_name)
