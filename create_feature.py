@@ -24,7 +24,6 @@ def merge_authors(total_data):
 	total_data['old_to_new'] = old_to_new
 	total_data['new_to_old'] = new_to_old
 
-def
 
 
 
