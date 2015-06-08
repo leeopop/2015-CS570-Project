@@ -1,5 +1,6 @@
 import csv
 import os
+import numpy
 
 #return: dict, key = uniq id
 #val: dict, key = column name, val = val
@@ -41,3 +42,20 @@ def load_all(directory = '.', file_list = None):
 		file_name = os.path.join(directory, '{}.csv'.format(name))
 		return_data[name] = load_single_file(file_name)
 	return return_data
+
+def load_title_lda(total_data):
+	lda_title_keyword = load_single_file('keyword_table.csv')
+	word_topic_dict = dict()
+	with open('lda_output.txt', 'r', encoding='utf-8') as read_file:
+		for line in read_file.readlines():
+			splitted = line.split()
+			word = splitted[0]
+			topics = splitted[1:]
+			topic_sum = float(sum([int(x) for x in topics]))
+			value_list = [ (float(x)/topic_sum) for x in topics]
+			value_vector = numpy.array(value_list)
+			word_topic_dict[int(word)] = value_vector
+	total_data['title_keyword'] = lda_title_keyword
+	total_data['title_keyword_topic'] = word_topic_dict
+
+
