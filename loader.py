@@ -19,13 +19,16 @@ def load_single_file(input_file):
 			val = dict()
 			key = None
 			prep_key = []
+			continue_id = True
 			for (col, item) in zip(column, line):
-				if ('id' in col) and not ('ids' in col):
+				if continue_id and ('id' in col) and not ('ids' in col):
 					if item.isdigit():
 						prep_key.append(int(item))
 					else:
 						prep_key.append(str(item))
 					continue
+				else:
+					continue_id = False
 				val[col] = item
 			if(len(prep_key) == 1):
 				key = prep_key[0]
