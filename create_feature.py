@@ -17,7 +17,10 @@ def author_topic(total_data, num_topics=150):
 	author_sum = dict()
 
 	for (paper_id,author_id) in paper_author.keys():
-		sum_vector = paper[paper_id]['topic_sum']
+		if (not paper_id in paper.keys()):
+			sum_vector = numpy.zeros(num_topics)
+		else:
+			sum_vector = paper[paper_id]['topic_sum']
 		if not (author_id in author_sum.keys()):
 			author_sum[author_id] = sum_vector
 		else:
