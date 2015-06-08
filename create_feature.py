@@ -1,5 +1,6 @@
 ##header begins
 from collections import defaultdict
+from extract_keywords import split_line
 import numpy
 import csv
 
@@ -77,13 +78,24 @@ def convert_title(total_data):
 	assert('title_keyword' in total_data.keys())
 	assert('title_keyword_topic' in total_data.keys())
 
+	paper = total_data['Paper']
 	# key: word, value: unique id
 	# e.g. title_keyword['apple']['unique'] returns unique identifier
 	title_keyword = total_data['title_keyword']
 
 	# key: word id (unique identifier), value: numpy vector
 	title_keyword_topic = total_data['title_keyword_topic']
+	dim = len(list(title_keyword_topic.values())[0])
+	for item in paper:
+		title_vector = split_line(paper[item]['title'])
+		topic_vector = numpy.zeros(dim)
+		for word in title_vector:
+			if word in title_keyword:
+				word_id = int(title_keyword[word]['unique'])
+				word_vector = title_keyword_topic[word_id]
+				topic_vector += word_vector
 
+		paper[item]['topic_vector'] = topic_vector
 	#hint: use split_line in extract_keyword.py
 	#hint: merge 'title' and 'keyword' of paper data
 
