@@ -20,7 +20,10 @@ def load_single_file(input_file):
 			prep_key = []
 			for (col, item) in zip(column, line):
 				if('id' in col):
-					prep_key.append(int(item))
+					if item.isdigit():
+						prep_key.append(int(item))
+					else:
+						prep_key.append(str(item))
 					continue
 				val[col] = item
 			if(len(prep_key) == 1):
