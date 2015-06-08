@@ -87,8 +87,7 @@ def submit(input_file, output_file, score_dict):
 
 			for [author,papers] in reader:
 				list_papers = papers.strip().split()
-				sorted(list_papers, key=lambda paper: score_dict[(int(author), int(paper))][1])
-
+				list_papers = sorted(list_papers, key=lambda paper: score_dict[(int(author), int(paper))][0])
 				writer.writerow([author, ' '.join(list_papers)])
 
 
@@ -106,17 +105,18 @@ def main():
 	)
 	classifier.fit(samples, responses)
 	ret = classifier.score(samples, responses)
-	print("Train score: {}",format(ret))
+	print("Train score: {}".format(ret))
 
 	(tests,responses,is_class) = read_data("test_data.csv")
 	predict_result = classifier.predict_proba(tests)
 	label = read_index("test_index.csv")
 	print("result_len: {}, label_len: {}".format(len(predict_result), len(label)))
 
+	print(predict_result)
 	score_dict = dict()
 	for (prob, key) in zip(predict_result, label):
-		assert(not key in score_dict.keys())
 		score_dict[key] = prob
+	print(score_dict)
 
 	submit("Test.csv", "submit.csv", score_dict)
 
