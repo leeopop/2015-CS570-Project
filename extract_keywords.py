@@ -5,6 +5,8 @@ from collections import defaultdict
 
 def split_line(single_string):
 	keyword_stop = ['key', 'word']
+	#generated from lda_preprocess.py
+	keyword_useless = ['at', 'based', 'behavior', 'beyond', 'by', 'characteristics', 'comparison', 'development', 'different', 'during', 'dynamic', 'effective', 'effects', 'efficient', 'evaluation', 'for', 'from', 'function', 'implications', 'improved', 'in', 'investigation', 'its', 'level', 'local', 'mechanism', 'mechanisms', 'model', 'modeling', 'new', 'novel', 'of', 'on', 'organization', 'patterns', 'results', 'revisited', 'role', 's', 'simple', 'some', 'specific', 'structures', 'studies', 'a', 'system', 'systems', 'techniques', 'the', 'their', 'through', 'to', 'towards', 'two', 'using', 'versus', 'via', 'with', 'within', 'an', 'analysis', 'and', 'applications', 'approach', 'as', 'aspects']
 	keyword_split = r'[\,\.\'\"\:\; \`\|\(\)]'
 	splitter = re.compile(keyword_split, flags=re.UNICODE)
 
@@ -13,7 +15,16 @@ def split_line(single_string):
 	words = [x.strip() for x in words]
 	ret = []
 	for x in words:
-		if len(x.strip()) == 0:
+		x = x.strip()
+		if len(x) == 0:
+			continue
+		stop = False
+		for stopwords in keyword_stop:
+			if stopwords in x:
+				stop = True
+		if x in keyword_useless:
+			stop = True
+		if stop:
 			continue
 		ret.append(x)
 	return ret
