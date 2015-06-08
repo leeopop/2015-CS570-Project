@@ -2,7 +2,7 @@ from loader import *
 from create_feature import *
 
 def main():
-	total_data = load_all()
+	total_data = load_all(file_list=['Author', 'Paper', 'PaperAuthor'])
 	load_title_lda(total_data)
 	paper_topic(total_data)
 	author_topic(total_data)
