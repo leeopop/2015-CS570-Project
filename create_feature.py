@@ -5,7 +5,7 @@ import numpy
 import csv
 
 ##header ends
-def author_title(total_data, num_topics=150):
+def author_topic(total_data, num_topics=150):
 	assert('Author' in total_data.keys())
 	assert('PaperAuthor' in total_data.keys())
 	assert('Paper' in total_data.keys())
@@ -74,7 +74,7 @@ def merge_authors(total_data):
 	total_data['old_to_new'] = old_to_new
 	total_data['new_to_old'] = new_to_old
 
-def convert_title(total_data):
+def paper_topic(total_data):
 	assert('title_keyword' in total_data.keys())
 	assert('title_keyword_topic' in total_data.keys())
 
@@ -88,6 +88,7 @@ def convert_title(total_data):
 	dim = len(list(title_keyword_topic.values())[0])
 	for item in paper:
 		title_vector = split_line(paper[item]['title'])
+		title_vector += split_line(paper[item]['keyword'])
 		topic_vector = numpy.zeros(dim)
 		for word in title_vector:
 			if word in title_keyword:
@@ -95,7 +96,7 @@ def convert_title(total_data):
 				word_vector = title_keyword_topic[word_id]
 				topic_vector += word_vector
 
-		paper[item]['topic_vector'] = topic_vector
+		paper[item]['topic_sum'] = topic_vector
 	#hint: use split_line in extract_keyword.py
 	#hint: merge 'title' and 'keyword' of paper data
 
