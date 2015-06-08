@@ -38,6 +38,3 @@ def load_all(directory = '.', file_list = None):
 		file_name = os.path.join(directory, '{}.csv'.format(name))
 		return_data[name] = load_single_file(file_name)
 	return return_data
-
-
-load_all()
