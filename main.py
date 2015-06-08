@@ -4,9 +4,10 @@ import sklearn
 import sklearn.ensemble
 import sklearn.ensemble.forest
 import multiprocessing
+from loader import load_single_file
 
 #is_class
-def read_data(filename, classification=True):
+def read_data(filename, classification=True, limit_index=None):
 	with open(filename, 'r', encoding='utf-8') as read_file:
 		samples = []
 		responses = []
@@ -16,6 +17,9 @@ def read_data(filename, classification=True):
 		target_id = -1
 		is_class = []
 		for i in range(len(column)):
+			if limit_index is not None:
+				if column[i].lower() is not limit_index:
+					continue
 			if column[i].lower() == "target":
 				target_id = i
 				#is_class.append(cv2.ml.VAR_CATEGORICAL)
@@ -93,7 +97,9 @@ def submit(input_file, output_file, score_dict):
 
 
 def main():
-	(samples,responses,is_class) = read_data("train_data.csv")
+	limit_index=['target','topic_dot']
+	#limit_index=None
+	(samples,responses,is_class) = read_data("train_data.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
 	#This parameter works for development environment
@@ -109,7 +115,7 @@ def main():
 	ret = classifier.score(samples, responses)
 	print("Train score: {}".format(ret))
 
-	(tests,responses,is_class) = read_data("test_data.csv")
+	(tests,responses,is_class) = read_data("test_data.csv", limit_index=limit_index)
 	predict_result = classifier.predict_proba(tests)
 	label = read_index("test_index.csv")
 	print("result_len: {}, label_len: {}".format(len(predict_result), len(label)))
@@ -120,6 +126,27 @@ def main():
 
 	submit("Test.csv", "submit.csv", score_dict)
 
+def add_column(orig,orig_index,new,new_file, new_column):
+	label = read_index("test_index.csv")
+
+	with open(orig, 'r', encoding='utf-8') as read_file:
+		reader = csv.reader(read_file)
+		column = reader.__next__()
+
+		new_data = load_single_file(new) #paper,author
+		with open(new_file, 'w', encoding='utf-8') as write_file:
+			writer = csv.writer(write_file)
+
+			column += new_column
+			writer.writerow(column)
+
+			for (line,(author_id, paper_id)) in zip(reader, label):
+				for new_col in new_column:
+					line.append(new_data[(paper_id,author_id)][new_col])
+				writer.writerow(line)
+	pass
+
 if __name__ == '__main__':
 	main()
-	#main2()
+	#add_column('test_data.csv','test_index.csv','paper_author_topic_dot.csv','test_data_dot.csv',['topic_dot'])
+	#add_column('train_data.csv','train_index.csv','paper_author_topic_dot.csv','train_data_dot.csv',['topic_dot'])
