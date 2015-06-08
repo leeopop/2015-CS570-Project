@@ -48,7 +48,7 @@ def paper_author_topic_sum(total_data, num_topics=150):
 			author_topic = author[author_id]['topic_sum']
 			paper_author[(paper_id, author_id)]['topic_dot'] = numpy.dot(paper_topic, author_topic)
 		else:
-			paper_author[(paper_id, author_id)]['topic_dot'] = numpy.zeros(num_topics)
+			paper_author[(paper_id, author_id)]['topic_dot'] = float(0)
 
 def save_topic_sum(total_data):
 	assert('PaperAuthor' in total_data.keys())
