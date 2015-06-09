@@ -35,7 +35,7 @@ def load_single_file(input_file, limit_keys=None):
 			else:
 				key = tuple(prep_key)
 			if limit_keys is not None:
-				if not limit_keys in limit_keys:
+				if not key in limit_keys:
 					continue
 			id_table[key] = val
 		return id_table
