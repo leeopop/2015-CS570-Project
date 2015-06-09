@@ -101,7 +101,7 @@ def submit(input_file, output_file, score_dict):
 
 
 def main():
-	#limit_index=['target','topic_dot']
+	limit_index=['target','topic_dot','has_topic_dot']
 	limit_index=None
 	(samples,responses,is_class) = read_data("train_data_dot.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
@@ -131,7 +131,7 @@ def main():
 	submit("Test.csv", "submit.csv", score_dict)
 
 def add_column(orig,orig_index,new,new_file, new_column):
-	label = read_index("test_index.csv")
+	label = read_index(orig_index)
 
 	with open(orig, 'r', encoding='utf-8') as read_file:
 		reader = csv.reader(read_file)
@@ -151,6 +151,6 @@ def add_column(orig,orig_index,new,new_file, new_column):
 	pass
 
 if __name__ == '__main__':
-	#main()
-	add_column('test_data.csv','test_index.csv','paper_author_topic_dot.csv','test_data_dot.csv',['topic_dot'])
-	add_column('train_data.csv','train_index.csv','paper_author_topic_dot.csv','train_data_dot.csv',['topic_dot'])
+	main()
+	#add_column('test_data.csv','test_index.csv','paper_author_topic_dot.csv','test_data_dot.csv',['topic_dot','has_topic_dot'])
+	#add_column('train_data.csv','train_index.csv','paper_author_topic_dot.csv','train_data_dot.csv',['topic_dot','has_topic_dot'])
