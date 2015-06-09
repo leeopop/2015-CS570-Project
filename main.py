@@ -144,9 +144,11 @@ def main():
 	            'topic_cross_141', 'topic_cross_142', 'topic_cross_143', 'topic_cross_144', 'topic_cross_145',
 	            'topic_cross_146', 'topic_cross_147', 'topic_cross_148', 'topic_cross_149']
 
+	limit_index += ['count_authorid_paperid']
 	#limit_index += ['count_authorid_paperid','count_author_paperid']
 	#limit_index += orig_index
 	#limit_index += lda_index
+	#limit_index += ['topic_dot']
 	limit_index += lda_cross_index
 
 	(samples,responses,is_class) = read_data("train_data_all.csv", limit_index=limit_index)
@@ -156,9 +158,10 @@ def main():
 	#classifier = sklearn.ensemble.AdaBoostClassifier(
 	#	n_estimators = 50,
 	classifier = sklearn.ensemble.RandomForestClassifier(
-		n_estimators = 150,
+		n_estimators = 576,
 		criterion = 'entropy',
 		#max_features = 50,
+		class_weight='auto',
 		n_jobs = multiprocessing.cpu_count(),
 		verbose = 1
 	)
