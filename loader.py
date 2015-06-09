@@ -5,7 +5,7 @@ import numpy
 #return: dict, key = uniq id
 #val: dict, key = column name, val = val
 #example: dict: {2066053: {'affiliation': 'KAIST', 'name': 'myname'}}
-def load_single_file(input_file):
+def load_single_file(input_file, limit_keys=None):
 	with open(input_file, 'r', encoding='utf-8') as read_file:
 		reader = csv.reader(read_file)
 		column = reader.__next__()
@@ -34,6 +34,9 @@ def load_single_file(input_file):
 				key = prep_key[0]
 			else:
 				key = tuple(prep_key)
+			if limit_keys is not None:
+				if not limit_keys in limit_keys:
+					continue
 			id_table[key] = val
 		return id_table
 

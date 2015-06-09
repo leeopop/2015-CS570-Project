@@ -101,23 +101,24 @@ def submit(input_file, output_file, score_dict):
 
 
 def main():
+	limit_index=None
 	limit_index=['target','topic_dot','has_topic_dot']
-	#limit_index=None
 	(samples,responses,is_class) = read_data("train_data_dot.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
 	#This parameter works for development environment
 	classifier = sklearn.ensemble.RandomForestClassifier(
 		n_estimators = 1500,
-		criterion = 'entropy',
-		max_features = None,
-		class_weight='auto',
+		#criterion = 'entropy',
+		#max_features = None,
+		#class_weight='auto',
 		n_jobs = multiprocessing.cpu_count(),
 		verbose = 1
 	)
 	classifier.fit(samples, responses)
 	ret = classifier.score(samples, responses)
 	print("Train score: {}".format(ret))
+	print("Feature score: ".format(classifier.feature_importances_))
 
 	(tests,responses,is_class) = read_data("test_data_dot.csv", limit_index=limit_index)
 	predict_result = classifier.predict_proba(tests)
@@ -137,7 +138,7 @@ def add_column(orig,orig_index,new,new_file, new_column):
 		reader = csv.reader(read_file)
 		column = reader.__next__()
 
-		new_data = load_single_file(new) #paper,author
+		new_data = load_single_file(new, limit_keys=set(label)) #paper,author
 		with open(new_file, 'w', encoding='utf-8') as write_file:
 			writer = csv.writer(write_file)
 
