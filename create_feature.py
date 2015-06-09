@@ -30,7 +30,7 @@ def author_topic(total_data, num_topics=150):
 		if author_id in author_sum.keys():
 			vector = author_sum[author_id]
 			sum = numpy.sum(vector)
-			if(vector > 0.5):
+			if(sum > 0.5):
 				vector /= sum
 			author_field['topic_sum'] = vector
 		else:
