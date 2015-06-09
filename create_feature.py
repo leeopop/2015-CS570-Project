@@ -3,7 +3,7 @@ from collections import defaultdict
 from extract_keywords import split_line
 import numpy
 import csv
-
+__do_cross = True
 ##header ends
 def author_topic(total_data, num_topics=150):
 	assert('Author' in total_data.keys())
@@ -50,27 +50,42 @@ def paper_author_topic_sum(total_data, num_topics=150):
 		if (paper_id in paper.keys()) and (author_id in author.keys()):
 			paper_topic = paper[paper_id]['topic_sum']
 			author_topic = author[author_id]['topic_sum']
-			norm = numpy.linalg.norm(paper_topic)
-			if norm > 0.5:
+			sum = numpy.sum(paper_topic)
+			if sum > 0.5:
 				paper_author[(paper_id, author_id)]['topic_dot'] = numpy.dot(paper_topic, author_topic)
 				paper_author[(paper_id, author_id)]['has_topic_dot'] = int(1)
+				if __do_cross:
+					paper_author[(paper_id, author_id)]['topic_cross'] = numpy.multiply(paper_topic, author_topic)
 			else:
 				paper_author[(paper_id, author_id)]['topic_dot'] = float(0)
 				paper_author[(paper_id, author_id)]['has_topic_dot'] = int(0)
+				if __do_cross:
+					paper_author[(paper_id, author_id)]['topic_cross'] = numpy.zeros(num_topics)
 		else:
 			paper_author[(paper_id, author_id)]['topic_dot'] = float(0)
 			paper_author[(paper_id, author_id)]['has_topic_dot'] = int(0)
+			if __do_cross:
+				paper_author[(paper_id, author_id)]['topic_cross'] = numpy.zeros(num_topics)
 
-def save_topic_sum(total_data):
+def save_topic_sum(total_data, num_topics=150):
 	assert('PaperAuthor' in total_data.keys())
 	paper_author = total_data['PaperAuthor']
 	with open('paper_author_topic_dot.csv','w',encoding='utf-8') as write_file:
 		writer = csv.writer(write_file)
-		writer.writerow(['paperid','authorid','topic_dot','has_topic_dot'])
+		col = ['paperid','authorid','topic_dot','has_topic_dot']
+		if __do_cross:
+			for i in range(num_topics):
+				col.append('topic_cross_{}'.format(i))
+		writer.writerow(col)
 		for (paper_id,author_id) in paper_author.keys():
-			writer.writerow([paper_id, author_id,
+			row = [paper_id, author_id,
 			                 paper_author[(paper_id,author_id)]['topic_dot'],
-			                 paper_author[(paper_id,author_id)]['has_topic_dot']])
+			                 paper_author[(paper_id,author_id)]['has_topic_dot']]
+			if __do_cross:
+				cross_vector = paper_author[(paper_id,author_id)]['topic_cross']
+				for i in range(num_topics):
+					row.append(cross_vector[i])
+			writer.writerow(row)
 
 
 ##from here, leeopop does
