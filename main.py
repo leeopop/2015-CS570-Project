@@ -103,7 +103,12 @@ def submit(input_file, output_file, score_dict):
 def main():
 	limit_index=None
 	limit_index=['target']
-	limit_index += ['topic_dot','has_topic_dot','topic_cross_0',
+	orig_index = ['year','count_authorid','count_paperid','count_authorid_paperid','count_authorid_paperid_onameid',
+	              'count_paperid_onameid', 'count_upper_authorid_paperid','count_upper_paperid','count_unq_authorid',
+	              'count_unq_paperid','count_unq_paperid_onameid','count_author_paperid','count_unq_author_paperid',
+	              'count_same_aff_paperid','count_aff_authorid_paperid','count_aff_paperid','count_datadup_authorid_paperid',
+	              'has_conferenceid','has_journalid','has_year','has_title','has_keyword','count_not_abb_paperid']
+	lda_index = ['topic_dot','has_topic_dot','topic_cross_0',
 	            'topic_cross_1', 'topic_cross_2', 'topic_cross_3', 'topic_cross_4', 'topic_cross_5',
 	            'topic_cross_6', 'topic_cross_7', 'topic_cross_8', 'topic_cross_9', 'topic_cross_10',
 	            'topic_cross_11', 'topic_cross_12', 'topic_cross_13', 'topic_cross_14', 'topic_cross_15',
@@ -134,6 +139,10 @@ def main():
 	            'topic_cross_136', 'topic_cross_137', 'topic_cross_138', 'topic_cross_139', 'topic_cross_140',
 	            'topic_cross_141', 'topic_cross_142', 'topic_cross_143', 'topic_cross_144', 'topic_cross_145',
 	            'topic_cross_146', 'topic_cross_147', 'topic_cross_148', 'topic_cross_149']
+
+	limit_index += orig_index
+	limit_index += lda_index
+
 	(samples,responses,is_class) = read_data("train_data_all.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
