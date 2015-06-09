@@ -1,8 +1,11 @@
 import csv
 import numpy
 import sklearn
+import sklearn.base
+import sklearn.naive_bayes
 import sklearn.ensemble
 import sklearn.ensemble.forest
+import sklearn.linear_model
 import multiprocessing
 from loader import load_single_file
 
@@ -108,7 +111,8 @@ def main():
 	              'count_unq_paperid','count_unq_paperid_onameid','count_author_paperid','count_unq_author_paperid',
 	              'count_same_aff_paperid','count_aff_authorid_paperid','count_aff_paperid','count_datadup_authorid_paperid',
 	              'has_conferenceid','has_journalid','has_year','has_title','has_keyword','count_not_abb_paperid']
-	lda_index = ['topic_dot','has_topic_dot','topic_cross_0',
+	lda_index = ['topic_dot','has_topic_dot']
+	lda_cross_index = ['topic_cross_0',
 	            'topic_cross_1', 'topic_cross_2', 'topic_cross_3', 'topic_cross_4', 'topic_cross_5',
 	            'topic_cross_6', 'topic_cross_7', 'topic_cross_8', 'topic_cross_9', 'topic_cross_10',
 	            'topic_cross_11', 'topic_cross_12', 'topic_cross_13', 'topic_cross_14', 'topic_cross_15',
@@ -140,25 +144,33 @@ def main():
 	            'topic_cross_141', 'topic_cross_142', 'topic_cross_143', 'topic_cross_144', 'topic_cross_145',
 	            'topic_cross_146', 'topic_cross_147', 'topic_cross_148', 'topic_cross_149']
 
-	limit_index += orig_index
-	limit_index += lda_index
+	#limit_index += ['count_authorid_paperid','count_author_paperid']
+	#limit_index += orig_index
+	#limit_index += lda_index
+	limit_index += lda_cross_index
 
 	(samples,responses,is_class) = read_data("train_data_all.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
 	#This parameter works for development environment
+	#classifier = sklearn.ensemble.AdaBoostClassifier(
+	#	n_estimators = 50,
 	classifier = sklearn.ensemble.RandomForestClassifier(
-		n_estimators = 1500,
-		#criterion = 'entropy',
-		#max_features = None,
-		#class_weight='auto',
+		n_estimators = 150,
+		criterion = 'entropy',
+		#max_features = 50,
 		n_jobs = multiprocessing.cpu_count(),
 		verbose = 1
 	)
+	#)
+
 	classifier.fit(samples, responses)
 	ret = classifier.score(samples, responses)
 	print("Train score: {}".format(ret))
-	print("Feature score: ".format(classifier.feature_importances_))
+	important = classifier.feature_importances_
+	print("Feature score: ")
+	for (name,x) in zip(limit_index[1:], important):
+		print("{}: {}".format(name,x))
 
 	(tests,responses,is_class) = read_data("test_data_all.csv", limit_index=limit_index)
 	predict_result = classifier.predict_proba(tests)
