@@ -28,7 +28,11 @@ def author_topic(total_data, num_topics=150):
 
 	for (author_id, author_field) in author.items():
 		if author_id in author_sum.keys():
-			author_field['topic_sum'] = author_sum[author_id]
+			vector = author_sum[author_id]
+			sum = numpy.sum(vector)
+			if(vector > 0.5):
+				vector /= sum
+			author_field['topic_sum'] = vector
 		else:
 			author_field['topic_sum'] = numpy.zeros(num_topics)
 
@@ -107,9 +111,9 @@ def paper_topic(total_data):
 				word_id = int(title_keyword[word]['unique'])
 				word_vector = title_keyword_topic[word_id]
 				topic_vector += word_vector
-		norm = numpy.linalg.norm(topic_vector)
-		if norm > 0.5:
-			topic_vector /= norm
+		sum = numpy.sum(topic_vector)
+		if sum > 0.5:
+			topic_vector /= sum
 		paper[item]['topic_sum'] = topic_vector
 	#hint: use split_line in extract_keyword.py
 	#hint: merge 'title' and 'keyword' of paper data

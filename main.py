@@ -102,7 +102,7 @@ def submit(input_file, output_file, score_dict):
 
 def main():
 	limit_index=['target','topic_dot','has_topic_dot']
-	limit_index=None
+	#limit_index=None
 	(samples,responses,is_class) = read_data("train_data_dot.csv", limit_index=limit_index)
 	print("Using {} CPUs".format(multiprocessing.cpu_count()))
 
